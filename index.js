@@ -52,7 +52,9 @@ function dropAllCollections() {
   });
 }
 //dropAllCollections();
-
+app.get("/", (req, res) => {
+  res.send("Welcome to Ecommerce scrapper");
+});
 app.get("/products", async (req, res) => {
   const query = req.query;
   console.log(query);
