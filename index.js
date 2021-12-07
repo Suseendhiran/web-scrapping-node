@@ -46,9 +46,9 @@ setInterval(() => {
 
 //12 hrs = 43200000
 function dataScrapper(category) {
+  getAmazonResponse(category);
   getFlipkartResponse(category);
   getSnapdealResponse(category);
-  getAmazonResponse(category);
 }
 function dropAllCollections() {
   // websites.forEach((website) => {
