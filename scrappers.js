@@ -103,7 +103,7 @@ export async function getAmazonResponse(category) {
   });
   const $ = cheerio.load(amazonResponse);
   let products = amazonScrapper($, category);
-  client.db("scrapper").collection("amazon").insertMany(products);
+  client.db("scrapper").collection("products").insertMany(products);
 }
 export async function getFlipkartResponse(category) {
   const flipkartResponse = await request({
@@ -113,7 +113,7 @@ export async function getFlipkartResponse(category) {
   const $ = cheerio.load(flipkartResponse);
   let products = flipkartScrapper($, category);
 
-  client.db("scrapper").collection("flipkart").insertMany(products);
+  client.db("scrapper").collection("products").insertMany(products);
 }
 export async function getSnapdealResponse(category) {
   const snapdealResponse = await request({
@@ -122,5 +122,5 @@ export async function getSnapdealResponse(category) {
 
   const $ = cheerio.load(snapdealResponse);
   let products = snapDealScrapper($, category);
-  client.db("scrapper").collection("snapdeal").insertMany(products);
+  client.db("scrapper").collection("products").insertMany(products);
 }

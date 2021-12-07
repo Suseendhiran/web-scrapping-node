@@ -9,10 +9,12 @@ import {
 } from "./scrappers.js";
 
 const app = express();
-app.listen(process.env.PORT);
+
 app.use(express.json());
 app.use(cors());
 dotenv.config();
+
+app.listen(process.env.PORT);
 
 //const MONGO_URL = "mongodb://localhost";
 
@@ -38,9 +40,9 @@ setInterval(() => {
   });
 }, [43200000]);
 //dropAllCollections();
-// categories.forEach((category) => {
-//   dataScrapper(category);
-// });
+categories.forEach((category) => {
+  dataScrapper(category);
+});
 
 //12 hrs = 43200000
 function dataScrapper(category) {
@@ -49,9 +51,10 @@ function dataScrapper(category) {
   getAmazonResponse(category);
 }
 function dropAllCollections() {
-  websites.forEach((website) => {
-    client.db("scrapper").collection(website).drop();
-  });
+  // websites.forEach((website) => {
+  //   client.db("scrapper").collection(website).drop();
+  // });
+  client.db("scrapper").collection("products").drop();
 }
 //dropAllCollections();
 app.get("/", (req, res) => {
@@ -59,25 +62,12 @@ app.get("/", (req, res) => {
 });
 app.get("/products", async (req, res) => {
   const query = req.query;
-  console.log(query);
-  let amazonProducts = [];
-  let flipkartProducts = [];
-  let snapdealProducts = [];
-  amazonProducts = await client
+
+  let products = await client
     .db("scrapper")
-    .collection("amazon")
-    .find(query)
-    .toArray();
-  flipkartProducts = await client
-    .db("scrapper")
-    .collection("flipkart")
-    .find(query)
-    .toArray();
-  snapdealProducts = await client
-    .db("scrapper")
-    .collection("snapdeal")
+    .collection("products")
     .find(query)
     .toArray();
 
-  res.send([...amazonProducts, ...flipkartProducts, ...snapdealProducts]);
+  res.send([...products]);
 });
