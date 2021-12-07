@@ -40,9 +40,9 @@ setInterval(() => {
   });
 }, [43200000]);
 //dropAllCollections();
-categories.forEach((category) => {
-  dataScrapper(category);
-});
+// categories.forEach((category) => {
+//   dataScrapper(category);
+// });
 
 //12 hrs = 43200000
 function dataScrapper(category) {
