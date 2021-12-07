@@ -1,6 +1,7 @@
 import express from "express";
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
+import cors from "cors";
 import {
   getFlipkartResponse,
   getSnapdealResponse,
@@ -10,6 +11,7 @@ import {
 const app = express();
 app.listen(process.env.PORT);
 app.use(express.json());
+app.use(cors());
 dotenv.config();
 
 //const MONGO_URL = "mongodb://localhost";
