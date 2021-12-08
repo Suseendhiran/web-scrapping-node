@@ -79,7 +79,7 @@ function snapDealScrapper($, category) {
           let rating = 0;
 
           if (width) {
-            rating = parseInt(width.match(/\d{1,2}[\,\.]{1}\d{1,2}/g)) / 20;
+            rating = parseInt(width.match(/\d{1,3}[\,\.]{1}\d{1,2}/g)) / 20;
           }
 
           return rating;
@@ -125,6 +125,6 @@ export async function getSnapdealResponse(category) {
 
   const $ = cheerio.load(snapdealResponse);
   let products = snapDealScrapper($, category);
-  console.log("newv", products);
+
   client.db("scrapper").collection("products").insertMany(products);
 }
