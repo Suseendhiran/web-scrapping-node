@@ -7,6 +7,7 @@ import {
   getSnapdealResponse,
   getAmazonResponse,
 } from "./scrappers.js";
+import { queryBuilder } from "./queryBuilder.js";
 
 const app = express();
 
@@ -63,10 +64,12 @@ app.get("/", (req, res) => {
 app.get("/products", async (req, res) => {
   const query = req.query;
   const page = parseInt(query.page);
-  const limit = 10;
+  const limit = query.limit ? parseInt(query.limit) : 0;
+
   const response = {};
   delete query.page;
-  const startIndex = (page - 1) * limit;
+  delete query.limit;
+  const startIndex = page ? (page - 1) * limit + 1 : 0;
   const endIndex = page * limit;
 
   const productsCount = await client
@@ -82,24 +85,15 @@ app.get("/products", async (req, res) => {
   }
   //console.log("skip", startIndex);
   let products = [];
-  if (page) {
-    products = await client
-      .db("scrapper")
-      .collection("products")
-      .find(query)
-      .limit(limit)
-      .skip(startIndex + 1)
-      .toArray();
-  } else {
-    products = products = await client
-      .db("scrapper")
-      .collection("products")
-      .find({
-        source: query.source,
-        name: { $regex: query.name, $options: "$i" },
-      })
-      .toArray();
-  }
+  const findQuery = queryBuilder(query);
+
+  products = products = await client
+    .db("scrapper")
+    .collection("products")
+    .find(findQuery)
+    .limit(limit)
+    .skip(startIndex)
+    .toArray();
 
   //console.log(products.length, productsCount, endIndex);
   response.results = products;
