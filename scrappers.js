@@ -57,7 +57,7 @@ function flipkartScrapper($, category) {
       source: "Flipkart",
     };
 
-    if (name) flipkartProducts.push(data);
+    if (name && rating) flipkartProducts.push(data);
   });
   return flipkartProducts;
 }
