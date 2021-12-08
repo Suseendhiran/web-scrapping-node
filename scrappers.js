@@ -63,37 +63,40 @@ function flipkartScrapper($, category) {
 }
 function snapDealScrapper($, category) {
   let snapDealProducts = [];
-  $(".favDp").each((i, el) => {
-    const id = i;
-    const name = $(el).find(".product-title").text();
-    const price = $(el).find(".product-desc-price").text();
-    const priceWithOffer = $(el).find(".product-price").text();
-    const ratingWidth = $(el).find(".filled-stars").attr("style");
-    const image = $(el).find("img").attr("src");
-    const link = $(el).find(".dp-widget-link").attr("href");
+  $(".dp-widget").each((i, el) => {
+    $(el)
+      .find(".favDp")
+      .each((i, subEl) => {
+        const id = i;
+        const name = $(subEl).find(".product-title").text();
+        const price = $(subEl).find(".product-desc-price").text();
+        const priceWithOffer = $(subEl).find(".product-price").text();
+        const ratingWidth = $(subEl).find(".filled-stars").attr("style");
+        const image = $(subEl).find("picture").find("source").attr("srcset");
+        const link = $(subEl).find(".dp-widget-link").attr("href");
 
-    function calcuateRating(width) {
-      let rating = 0;
+        function calcuateRating(width) {
+          let rating = 0;
 
-      if (width) {
-        rating = parseInt(width.match(/\d{1,2}[\,\.]{1}\d{1,2}/g)) / 20;
-      }
+          if (width) {
+            rating = parseInt(width.match(/\d{1,2}[\,\.]{1}\d{1,2}/g)) / 20;
+          }
 
-      return rating;
-    }
-    const data = {
-      id,
-      name,
-      price,
-      priceWithOffer: priceWithOffer,
-      rating: `${calcuateRating(ratingWidth)} out of 5`,
-      image,
-      link,
-      category,
-      source: "Snapdeal",
-    };
-
-    if (name) snapDealProducts.push(data);
+          return rating;
+        }
+        const data = {
+          id,
+          name,
+          price,
+          priceWithOffer: priceWithOffer,
+          rating: `${calcuateRating(ratingWidth)} out of 5`,
+          image,
+          link,
+          category,
+          source: "Snapdeal",
+        };
+        if (name) snapDealProducts.push(data);
+      });
   });
   return snapDealProducts;
 }
@@ -117,10 +120,11 @@ export async function getFlipkartResponse(category) {
 }
 export async function getSnapdealResponse(category) {
   const snapdealResponse = await request({
-    uri: `https://www.snapdeal.com/search?keyword=${category}&santizedKeyword=sonytv&catId=0&categoryId=0&suggested=false&vertical=p&noOfResults=20&searchState=&clickSrc=go_header&lastKeyword=&prodCatId=&changeBackToAll=false&foundInAll=false&categoryIdSearched=&cityPageUrl=&categoryUrl=&url=&utmContent=&dealDetail=&sort=rlvncy`,
+    uri: `https://www.snapdeal.com/search?keyword=${category}&santizedKeyword=mobiles&catId=0&categoryId=0&suggested=false&vertical=p&noOfResults=20&searchState=&clickSrc=go_header&lastKeyword=&prodCatId=&changeBackToAll=false&foundInAll=false&categoryIdSearched=&cityPageUrl=&categoryUrl=&url=&utmContent=&dealDetail=&sort=rlvncy`,
   });
 
   const $ = cheerio.load(snapdealResponse);
   let products = snapDealScrapper($, category);
+  console.log("newv", products);
   client.db("scrapper").collection("products").insertMany(products);
 }
