@@ -75,15 +75,16 @@ app.get("/products", async (req, res) => {
   const productsCount = await client
     .db("scrapper")
     .collection("products")
-    .find({})
+    .find(queryBuilder(query))
     .count();
+
   if (endIndex < productsCount) {
     response.hasNext = true;
   }
   if (page > 1) {
     response.hasPrevious = true;
   }
-  //console.log("skip", startIndex);
+
   let products = [];
   const findQuery = queryBuilder(query);
 
@@ -97,5 +98,6 @@ app.get("/products", async (req, res) => {
 
   //console.log(products.length, productsCount, endIndex);
   response.results = products;
+  response.totalCount = productsCount;
   res.send(response);
 });
