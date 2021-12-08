@@ -62,12 +62,46 @@ app.get("/", (req, res) => {
 });
 app.get("/products", async (req, res) => {
   const query = req.query;
+  const page = parseInt(query.page);
+  const limit = 10;
+  const response = {};
+  delete query.page;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
 
-  let products = await client
+  const productsCount = await client
     .db("scrapper")
     .collection("products")
-    .find(query)
-    .toArray();
+    .find({})
+    .count();
+  if (endIndex < productsCount) {
+    response.hasNext = true;
+  }
+  if (page > 1) {
+    response.hasPrevious = true;
+  }
+  //console.log("skip", startIndex);
+  let products = [];
+  if (page) {
+    products = await client
+      .db("scrapper")
+      .collection("products")
+      .find(query)
+      .limit(limit)
+      .skip(startIndex + 1)
+      .toArray();
+  } else {
+    products = products = await client
+      .db("scrapper")
+      .collection("products")
+      .find({
+        source: query.source,
+        name: { $regex: query.name, $options: "$i" },
+      })
+      .toArray();
+  }
 
-  res.send([...products]);
+  //console.log(products.length, productsCount, endIndex);
+  response.results = products;
+  res.send(response);
 });
