@@ -31,21 +31,23 @@ async function createConnection() {
 export const client = await createConnection();
 
 export let products = [];
-const categories = ["mobiles", "laptops"];
+const categories = ["mobiles", "laptops"]; // categories can be added in this array which will add new category while scrapping every 12 hrs
 const websites = ["amazon", "flipkart", "snapdeal"];
 
 setInterval(() => {
-  dropAllCollections();
+  dropAllCollections(); //drop collection
   categories.forEach((category) => {
     dataScrapper(category);
   });
 }, [43200000]);
+//12 hrs = 43200000
+
 // dropAllCollections();
 // categories.forEach((category) => {
 //   dataScrapper(category);
 // });
 
-//12 hrs = 43200000
+//scrap data for different categories
 function dataScrapper(category) {
   getAmazonResponse(category);
   getFlipkartResponse(category);

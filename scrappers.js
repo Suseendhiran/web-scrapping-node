@@ -74,7 +74,7 @@ function snapDealScrapper($, category) {
         const ratingWidth = $(subEl).find(".filled-stars").attr("style");
         const image = $(subEl).find("picture").find("source").attr("srcset");
         const link = $(subEl).find(".dp-widget-link").attr("href");
-
+        //calculate rating from filled stars width, since snapdeal doesn't have ratings in text
         function calcuateRating(width) {
           let rating = 0;
 
