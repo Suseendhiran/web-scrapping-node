@@ -34,18 +34,22 @@ export let products = [];
 const categories = ["mobiles", "laptops"]; // categories can be added in this array which will add new category while scrapping every 12 hrs
 const websites = ["amazon", "flipkart", "snapdeal"];
 
-setInterval(() => {
-  dropAllCollections(); //drop collection
-  categories.forEach((category) => {
-    dataScrapper(category);
-  });
+//Scrap current data whenever reaching the interval
+setInterval(async () => {
+  const dropCollectionResponse = await dropAllCollections();
+  if (dropCollectionResponse) {
+    categories.forEach((category) => {
+      dataScrapper(category);
+    });
+  }
 }, [43200000]);
 //12 hrs = 43200000
-
-// dropAllCollections();
-// categories.forEach((category) => {
-//   dataScrapper(category);
-// });
+// const dropCollectionResponse = await dropAllCollections();
+//   if (dropCollectionResponse) {
+//     categories.forEach((category) => {
+//       dataScrapper(category);
+//     });
+//   }
 
 //scrap data for different categories
 function dataScrapper(category) {
@@ -53,11 +57,11 @@ function dataScrapper(category) {
   getFlipkartResponse(category);
   getSnapdealResponse(category);
 }
-function dropAllCollections() {
+async function dropAllCollections() {
   // websites.forEach((website) => {
   //   client.db("scrapper").collection(website).drop();
   // });
-  client.db("scrapper").collection("products").drop();
+  return await client.db("scrapper").collection("products").drop();
 }
 //dropAllCollections();
 app.get("/", (req, res) => {
