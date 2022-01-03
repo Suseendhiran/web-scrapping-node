@@ -103,6 +103,7 @@ function snapDealScrapper($, category) {
 export async function getAmazonResponse(category) {
   const amazonResponse = await request({
     uri: `https://www.amazon.in/s?k=${category}&ref=nb_sb_noss_2`,
+    gzip: true,
   });
   const $ = cheerio.load(amazonResponse);
   let products = amazonScrapper($, category);
